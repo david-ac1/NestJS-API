@@ -1,33 +1,33 @@
-import { Controller, Get, Param, Query, Post, Put, Body } from '@nestjs/common';
+import { Controller, Get, Param, Query, Post, Put, Body, Delete } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserService } from './user.service';
+import type { User } from './user.service';
 
 @Controller('user')
 export class UserController {  
     constructor(private readonly userService: UserService) {}
     // GET /user
    @Get()
-   getUsers(@Query('name') name: string) {
+   getUsers(@Query('name') name: string): User[] {
     return this.userService.findAllUsers(name);
-    //if(name) {
-       // return users.filter((user) => user.name.toLowerCase().includes(name.toLowerCase()));
-    //}
    }
    @Get(':id')
-   getUserById(@Param('id') id:string) {
-    return { id, name: "Ebuka Aranye" };
+   getUserById(@Param('id') id: string): User {
+    return this.userService.findOneUser(Number(id));
    }
    @Post()
-   createUser(@Body() CreateUserDto: CreateUserDto) {
-    return { data: CreateUserDto, message:"User created successfully" };
+   createUser(@Body() createUserDto: CreateUserDto): User {
+    return this.userService.createUser(createUserDto);
    }
 
    @Put(':id')
-   updateUser(@Param('id') id: string, @Body() updateUserDto: CreateUserDto) {
-    return {
-        data: { id, ...updateUserDto },
-        message: "User updated successfully",
-    }
+   updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): User | null {
+    return this.userService.updateUser(Number(id), updateUserDto);
+   }
+
+   @Delete(':id')
+   deleteUser(@Param('id') id: string): User | null {
+    return this.userService.deleteUser(Number(id));
    }
 }
