@@ -25,16 +25,17 @@ export class UserService {
     }
 
     findOneUser(id: number): User {
+        this.logger.log(`Finding User ${id}`);
         const user = this.users.find((user) => user.id === id);
         if (!user) {
-            throw new NotFoundException('User not found');
+            throw new NotFoundException(`User with id ${id} not found`);
         }
-        return user;
+        return { ...user };
     }
 
     createUser(dto: CreateUserDto): User {
         this.logger.log('Creating User');
-        const newUser: User = {id:this.users.length + 1,email:'', ...dto};
+        const newUser: User = {id:this.users.length + 1, ...dto};
         this.users.push(newUser);
 
         return newUser;
